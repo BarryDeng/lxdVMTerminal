@@ -1,4 +1,4 @@
-module VMConsoleWs
+module vmconsolews
 
 go 1.16
 

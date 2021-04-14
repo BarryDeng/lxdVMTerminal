@@ -12,9 +12,10 @@ import (
 func StartServer() {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/instance/{name}", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/instance/{server}/{name}", func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
 
-		d, err := InitLxdInstanceServer()
+		d, err := InitLxdInstanceServer(vars["server"])
 		if err != nil {
 			logger.Error(err.Error())
 			return
@@ -22,7 +23,7 @@ func StartServer() {
 		server := *d
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		socket := make(chan string)
-		vars := mux.Vars(r)
+
 		go vga(server, vars["name"], socket)
 		spiceSocket := <-socket
 		w.WriteHeader(302)
@@ -35,7 +36,7 @@ func StartServer() {
 
 	srv := &http.Server{
 		Handler: router,
-		Addr:    "127.0.0.1:8000",
+		Addr:    "0.0.0.0:8085",
 		// Good practice: enforce timeouts for servers you create!
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
