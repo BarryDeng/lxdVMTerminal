@@ -1,7 +1,8 @@
 package main
 
 type Config struct {
-	Server struct {
+	LocalIP string `yaml:"local_ip"`
+	Server  struct {
 		Port string `yaml:"port"`
 		Cert string `yaml:"cert"`
 		Key  string `yaml:"key"`

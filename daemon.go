@@ -3,25 +3,10 @@ package main
 import (
 	"fmt"
 	lxd "github.com/lxc/lxd/client"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"os"
 )
 
-func InitLxdInstanceServer(addr string) (*lxd.InstanceServer, error) {
-	ConfigFile, err := os.Open("config.yml")
-	if err != nil {
-		return nil, err
-	}
-	defer ConfigFile.Close()
-
-	var cfg Config
-	decoder := yaml.NewDecoder(ConfigFile)
-	err = decoder.Decode(&cfg)
-	if err != nil {
-		return nil, err
-	}
-
+func InitLxdInstanceServer(cfg *Config, addr string) (*lxd.InstanceServer, error) {
 	cert, err := ioutil.ReadFile(cfg.Server.Cert)
 	if err != nil {
 		return nil, err

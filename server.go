@@ -9,13 +9,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func StartServer() {
+func StartServer(cfg *Config) {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/instance/{server}/{name}", func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
-		d, err := InitLxdInstanceServer(vars["server"])
+		d, err := InitLxdInstanceServer(cfg, vars["server"])
 		if err != nil {
 			logger.Error(err.Error())
 			return
@@ -24,7 +24,7 @@ func StartServer() {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		socket := make(chan string)
 
-		go vga(server, vars["name"], socket)
+		go vga(cfg, server, vars["name"], socket)
 		spiceSocket := <-socket
 		w.WriteHeader(302)
 		_, err = w.Write([]byte(spiceSocket))

@@ -10,7 +10,7 @@ import (
 	"net"
 )
 
-func vga(d lxd.InstanceServer, name string, spice_socket chan string) {
+func vga(cfg *Config, d lxd.InstanceServer, name string, spice_socket chan string) {
 	var err error
 
 	// We currently use the control websocket just to abort in case of errors.
@@ -51,7 +51,7 @@ func vga(d lxd.InstanceServer, name string, spice_socket chan string) {
 	defer listener.Close()
 
 	addr := listener.Addr().(*net.TCPAddr)
-	socket = fmt.Sprintf("ws://0.0.0.0:%d", addr.Port)
+	socket = fmt.Sprintf("ws://%s:%d", cfg.LocalIP, addr.Port)
 
 	op, connect, err := d.ConsoleInstanceDynamic(name, req, &consoleArgs)
 	if err != nil {
