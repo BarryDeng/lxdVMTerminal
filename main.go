@@ -20,5 +20,6 @@ func main() {
 		log.Fatalf("decode config.yml: %v", err)
 	}
 
-	StartServer(&cfg)
+	s := InitServer()
+	s.StartServer(&cfg)
 }

@@ -10,7 +10,7 @@ import (
 	"net"
 )
 
-func vga(cfg *Config, d lxd.InstanceServer, name string, spice_socket chan string) {
+func vga(cfg *Config, d lxd.InstanceServer, name string, spice_socket chan string, sendDisconnect chan bool) {
 	var err error
 
 	// We currently use the control websocket just to abort in case of errors.
@@ -27,7 +27,6 @@ func vga(cfg *Config, d lxd.InstanceServer, name string, spice_socket chan strin
 	}
 
 	consoleDisconnect := make(chan bool)
-	sendDisconnect := make(chan bool)
 	defer close(sendDisconnect)
 
 	consoleArgs := lxd.InstanceConsoleArgs{
@@ -74,9 +73,9 @@ func vga(cfg *Config, d lxd.InstanceServer, name string, spice_socket chan strin
 					sendDisconnect <- true
 				}
 				count--
-				if count == 0 {
-					sendDisconnect <- true
-				}
+				//if count == 0 {
+				//	sendDisconnect <- true
+				//}
 			}(conn)
 		}
 	}()
@@ -88,5 +87,4 @@ func vga(cfg *Config, d lxd.InstanceServer, name string, spice_socket chan strin
 		logger.Error(err.Error())
 		return
 	}
-
 }
